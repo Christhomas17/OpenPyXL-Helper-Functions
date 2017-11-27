@@ -7,20 +7,13 @@ import re
 import pandas as pd
 import numpy as np
 
-#gets data from a range
-#sample execution
-	#wb = load_workbook('AVV045751.xlsx',read_only = True, data_only = True)
 
-	#strips = data_from_range('C9:J442','Strips',wb)
 
-# wb = load_workbook('Sample.xlsx', data_only = True)
-# ws = wb.get_sheet_by_name('Data')
-# rng = 'B4:C7'
 
-def clean_range_name(rngString):
-    return(re.sub("'","",rngString))
+def data_from_range(rngString,wb):
 
-def data_from_range(RngAsString,WsAsString,wb):
+    WsAsString,RngAsString = splitExcelRange(rngString)
+
 
     RngAsString = clean_range_name(RngAsString)
     WsAsString = clean_range_name(WsAsString)
@@ -33,7 +26,6 @@ def data_from_range(RngAsString,WsAsString,wb):
     except:
         start = rng
         end = start
-#    StartCol,EndCol = Get_Ranges(rng)
     
     data = []
     
@@ -44,10 +36,10 @@ def data_from_range(RngAsString,WsAsString,wb):
     
     return(df)
 
+def data_to_range(DataAsDataframe,wb):
 
- 
-def data_to_range(DataAsDataframe,FirstCell,WsAsString,wb):
-
+    WsAsString, FirstCell = splitExcelRange(rngString)
+    
     WsAsString = clean_range_name(WsAsString)
 
     
@@ -77,17 +69,35 @@ def data_to_range(DataAsDataframe,FirstCell,WsAsString,wb):
             
 
 
-def Clear_Range(RangeAsString,ws,wb):
-    for row in ws[RangeAsString]:
-        for cell in row:
-            cell.value = None
+
 
     
 
 
 ####################################
 #Helper Functions
-###################################            
+###################################
+
+def Clear_Range(RangeAsString,ws,wb):
+    for row in ws[RangeAsString]:
+        for cell in row:
+            cell.value = None
+        
+def clean_range_name(rngString):
+    return(re.sub("'","",rngString))
+
+            
+def splitExcelRange(text):
+    sheet,rng = text.split('!')
+    
+    if sheet.startswith("'"):        
+        sheet = sheet[1:len(sheet)]
+    if sheet.endswith("'"):
+        rng = rng[:-1]
+
+    return(sheet,rng)
+    
+            
 def Get_Ranges(RangeAsString):
     rng = RangeAsString
     
@@ -128,3 +138,4 @@ def col_letter_to_number(ColLetter):
                                
         return(SetNum + ColNum)
     
+
